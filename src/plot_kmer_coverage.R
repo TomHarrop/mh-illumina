@@ -1,5 +1,4 @@
 library(data.table)
-library(bit64)
 library(ggplot2)
 library(scales)
 
@@ -17,6 +16,7 @@ log_file <- snakemake@log[["log"]]
 # hist_before_file <- "output/030_norm/hist.txt"
 # hist_after_file <- "output/030_norm/hist_out.txt"
 # peak_file <- "output/030_norm/peaks.txt"
+# plot_file <- "output/030_norm/kmer_plot.pdf"
 
 ########
 # MAIN #
@@ -28,23 +28,23 @@ sink(log, type = "message")
 sink(log, append = TRUE, type = "output")
 
 # read data
-before_data <- fread(hist_before_file)
-after_data <- fread(hist_after_file)
+before_data <- fread(hist_before_file, colClasses = "numeric")
+after_data <- fread(hist_after_file, colClasses = "numeric")
 peaks <- fread(paste("grep '^[^#]'", peak_file))
 
 # combine
-before_data[, type := "Raw"]
-after_data[, type := "Normalised"]
-
-combined_data <- rbind(before_data, after_data)
+combined_data <- rbindlist(list(
+    Raw = before_data,
+    Normalised = after_data),
+    idcol = "type")
 
 # arrange plot
 combined_data[, type := factor(type, levels = c("Raw", "Normalised"))]
 
 # hlines
-mincov <- peaks[1, V1]
-p1 <- peaks[1, V2]
-maxcov <- peaks[1, V3]
+mincov <- peaks[which.max(V4), V1]
+p1 <- peaks[which.max(V4), V2]
+maxcov <- peaks[which.max(V4), V3]
 
 # plot title
 gt <- paste0(

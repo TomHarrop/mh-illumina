@@ -6,6 +6,6 @@ min_depth_cutoff    {3}
 local_num_procs     {4}
 local_max_memory    8
 use_cluster         0
-no_read_validation  0
+no_read_validation  1
 num_prefix_blocks   1
 
