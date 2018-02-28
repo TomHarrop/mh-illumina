@@ -73,8 +73,8 @@ rule target:
         #        diplo=['0', '1']),
         expand(('output/040_meraculous/trim-decon_k{k}_diplo{diplo}/'
                 'meraculous_final_results/final.scaffolds.fa'),
-               k=['31', '41', '51', '61', '71'],
-               diplo=['1', '2'])
+               k=['37', '41', '45'],
+               diplo=['1'])
 
 
 # 05 run bbmap stats on completed assemblies
@@ -138,7 +138,8 @@ rule meraculous:
         shell(
             'run_meraculous.sh '
             '-dir {params.outdir} '
-            '-config {output.config} '
+            '-config {output.config} '       
+            '-cleanup_level 2 '
             '&> {log}')
 
 # 03 normalise input
